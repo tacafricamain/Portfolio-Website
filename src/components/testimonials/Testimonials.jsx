@@ -58,6 +58,8 @@ const Testimonials = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const [adminMode, setAdminMode] = useState(false);
+  const [keySequence, setKeySequence] = useState('');
   const [userTestimonials, setUserTestimonials] = useState(() => {
     if (isLocalStorageAvailable()) {
       try {
@@ -115,6 +117,30 @@ const Testimonials = () => {
     loadCloudTestimonials();
   }, []);
 
+  // Secret admin access - listen for key sequence
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      const newSequence = keySequence + e.key.toLowerCase();
+      setKeySequence(newSequence);
+
+      // Secret admin code: "admin123"
+      if (newSequence.includes('admin123')) {
+        setAdminMode(true);
+        setMessage('🔓 Admin mode activated! You can now delete any review.');
+        setTimeout(() => setMessage(''), 3000);
+        setKeySequence('');
+      }
+
+      // Reset sequence after 10 characters
+      if (newSequence.length > 10) {
+        setKeySequence('');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [keySequence]);
+
   const handleEdit = (testimonial) => {
     setEditingId(testimonial.id);
     setFormData({
@@ -134,15 +160,20 @@ const Testimonials = () => {
   };
 
   const handleDelete = async (testimonialId) => {
-    // Only allow deletion if user owns the testimonial
-    if (!userTestimonials.includes(testimonialId)) {
+    // Allow deletion if user owns the testimonial OR admin mode is active
+    if (!userTestimonials.includes(testimonialId) && !adminMode) {
       setMessage('You can only delete your own testimonials.');
       setTimeout(() => setMessage(''), 3000);
       return;
     }
 
     // Confirm deletion
-    if (!window.confirm('Are you sure you want to delete this testimonial? This action cannot be undone.')) {
+    const isOwnTestimonial = userTestimonials.includes(testimonialId);
+    const confirmMessage = adminMode && !isOwnTestimonial 
+      ? '🔐 ADMIN DELETE: Are you sure you want to delete this testimonial? This action cannot be undone.'
+      : 'Are you sure you want to delete this testimonial? This action cannot be undone.';
+    
+    if (!window.confirm(confirmMessage)) {
       return;
     }
 
@@ -151,8 +182,10 @@ const Testimonials = () => {
       const updatedTestimonials = testimonials.filter(t => t.id !== testimonialId);
       setTestimonials(updatedTestimonials);
       
-      // Remove from user's testimonials tracking
-      setUserTestimonials(prev => prev.filter(id => id !== testimonialId));
+      // Remove from user's testimonials tracking (only if it was their own)
+      if (isOwnTestimonial) {
+        setUserTestimonials(prev => prev.filter(id => id !== testimonialId));
+      }
       
       // Save to cloud (only user-generated testimonials, not default ones)
       try {
@@ -162,7 +195,10 @@ const Testimonials = () => {
         console.warn('Failed to update cloud after deletion:', error);
       }
       
-      setMessage('Testimonial deleted successfully.');
+      const deleteMessage = adminMode && !isOwnTestimonial 
+        ? '🔐 Admin deletion successful.' 
+        : 'Testimonial deleted successfully.';
+      setMessage(deleteMessage);
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error deleting testimonial:', error);
@@ -302,29 +338,38 @@ const Testimonials = () => {
       >
         {testimonials.map(({ id, title, description, rating }) => {
           const canEdit = userTestimonials.includes(id);
+          const canDelete = canEdit || adminMode;
           return (
             <SwiperSlide className="testimonial__card" key={id}>
-              {canEdit && (
+              {(canEdit || adminMode) && (
                 <div className="testimonial__actions">
-                  <button 
-                    className="testimonial__edit-btn"
-                    onClick={() => handleEdit({ id, title, description, rating })}
-                    title="Edit your testimonial"
-                  >
-                    <i className="bx bx-edit"></i>
-                  </button>
-                  <button 
-                    className="testimonial__delete-btn"
-                    onClick={() => handleDelete(id)}
-                    title="Delete your testimonial"
-                  >
-                    <i className="bx bx-trash"></i>
-                  </button>
+                  {canEdit && (
+                    <button 
+                      className="testimonial__edit-btn"
+                      onClick={() => handleEdit({ id, title, description, rating })}
+                      title="Edit your testimonial"
+                    >
+                      <i className="bx bx-edit"></i>
+                    </button>
+                  )}
+                  {canDelete && (
+                    <button 
+                      className={`testimonial__delete-btn ${adminMode && !canEdit ? 'admin-delete' : ''}`}
+                      onClick={() => handleDelete(id)}
+                      title={adminMode && !canEdit ? "Admin delete" : "Delete your testimonial"}
+                    >
+                      <i className="bx bx-trash"></i>
+                    </button>
+                  )}
                 </div>
               )}
-              {/* Debug: Show user's testimonial IDs */}
+              {/* Show user badge for own testimonials */}
               {canEdit && (
                 <div className="testimonial__user-badge">Your Review</div>
+              )}
+              {/* Show admin badge when in admin mode for others' testimonials */}
+              {adminMode && !canEdit && (
+                <div className="testimonial__admin-badge">🔐 Admin</div>
               )}
               <h3 className="testimonial__name">{title}</h3>
               <p className="testimonial__description">{description}</p>

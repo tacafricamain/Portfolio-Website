@@ -248,6 +248,31 @@
   pointer-events: none;
 }
 
+/* Admin-specific styles */
+.testimonial__admin-badge {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.75rem;
+  background: #ff6b35;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  z-index: 50;
+}
+
+.testimonial__delete-btn.admin-delete {
+  background: #ff6b35;
+  border: 2px solid #ff4500;
+}
+
+.testimonial__delete-btn.admin-delete:hover {
+  background: #ff4500;
+  transform: scale(1.15);
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.5);
+}
+
 /* Ensure testimonial card has proper stacking context */
 .testimonial__card {
   overflow: visible;
