@@ -133,6 +133,44 @@ const Testimonials = () => {
     });
   };
 
+  const handleDelete = async (testimonialId) => {
+    // Only allow deletion if user owns the testimonial
+    if (!userTestimonials.includes(testimonialId)) {
+      setMessage('You can only delete your own testimonials.');
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
+
+    // Confirm deletion
+    if (!window.confirm('Are you sure you want to delete this testimonial? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      // Remove from testimonials list
+      const updatedTestimonials = testimonials.filter(t => t.id !== testimonialId);
+      setTestimonials(updatedTestimonials);
+      
+      // Remove from user's testimonials tracking
+      setUserTestimonials(prev => prev.filter(id => id !== testimonialId));
+      
+      // Save to cloud (only user-generated testimonials, not default ones)
+      try {
+        const userOnlyTestimonials = updatedTestimonials.filter(t => !Data.some(d => d.id === t.id));
+        await testimonialsService.saveTestimonials(userOnlyTestimonials);
+      } catch (error) {
+        console.warn('Failed to update cloud after deletion:', error);
+      }
+      
+      setMessage('Testimonial deleted successfully.');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      console.error('Error deleting testimonial:', error);
+      setMessage('Failed to delete testimonial. Please try again.');
+      setTimeout(() => setMessage(''), 3000);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -267,13 +305,22 @@ const Testimonials = () => {
           return (
             <SwiperSlide className="testimonial__card" key={id}>
               {canEdit && (
-                <button 
-                  className="testimonial__edit-btn"
-                  onClick={() => handleEdit({ id, title, description, rating })}
-                  title="Edit your testimonial"
-                >
-                  <i className="bx bx-edit"></i>
-                </button>
+                <div className="testimonial__actions">
+                  <button 
+                    className="testimonial__edit-btn"
+                    onClick={() => handleEdit({ id, title, description, rating })}
+                    title="Edit your testimonial"
+                  >
+                    <i className="bx bx-edit"></i>
+                  </button>
+                  <button 
+                    className="testimonial__delete-btn"
+                    onClick={() => handleDelete(id)}
+                    title="Delete your testimonial"
+                  >
+                    <i className="bx bx-trash"></i>
+                  </button>
+                </div>
               )}
               {/* Debug: Show user's testimonial IDs */}
               {canEdit && (

@@ -211,6 +211,43 @@
   pointer-events: none;
 }
 
+/* Testimonial actions container */
+.testimonial__actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+/* Delete button styles */
+.testimonial__delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.testimonial__delete-btn:hover {
+  background: #c82333;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.testimonial__delete-btn i {
+  pointer-events: none;
+}
+
 /* Ensure testimonial card has proper stacking context */
 .testimonial__card {
   overflow: visible;
