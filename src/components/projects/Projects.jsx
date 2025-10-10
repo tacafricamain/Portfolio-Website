@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
+import { Pagination, Autoplay } from 'swiper/modules';
 
 const Projects = () => {
   return (
@@ -20,6 +20,7 @@ const Projects = () => {
         grabCursor={true}
         spaceBetween={24}
         pagination={{ clickable: true }}
+        autoplay={{ delay: 2000, disableOnInteraction: false }}
         breakpoints={{
           576: {
             slidesPerView: 2,
@@ -30,7 +31,7 @@ const Projects = () => {
             spaceBetween: 48,
           },
         }}
-        modules={[Pagination]}
+        modules={[Pagination, Autoplay]}
       >
         {ProjectData.map(({ id, title, description, image, liveLink, githubLink }) => (
           <SwiperSlide className="project__card" key={id}>

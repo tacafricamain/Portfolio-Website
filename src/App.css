@@ -113,6 +113,24 @@ img {
   height: auto;
 }
 
+/* Apply Bricolage Grotesque font to all titles */
+h1, h2, h3, h4, h5, h6,
+.section__title,
+.section__subtitle,
+.skills__title,
+.testimonial__name,
+.nav__logo,
+.home__title,
+.about__title,
+.qualification__title,
+.services__title,
+.portfolio__title,
+.project__title,
+.contact__title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-optical-sizing: auto;
+}
+
 /*=============== REUSABLE CSS CLASSES ===============*/
 .section {
   padding: 6rem 0 2rem;

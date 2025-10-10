@@ -1,7 +1,7 @@
 import React from 'react';
 import "./about.css";
-import AboutImg from "../../assets/about.png";
-import CV from "../../assets/Sanjit-Cv.pdf";
+import AboutImg from "../../assets/about.jpg";
+import CV from "../../assets/Jahswill-CV.pdf";
 import Info from './Info';
 import { track } from '@vercel/analytics';
 
