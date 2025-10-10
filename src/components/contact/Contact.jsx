@@ -93,16 +93,16 @@ const Contact = () => {
                             <h3 className="contact__card-title">Email</h3>
                             <span className="contact__card-data">contact.jahswill@gmail.com</span>
 
-                            <a href="mailto:contact.jahswill@gmail.com" className="contact__button">Write me <i className="bx bx-right-arrow-alt contact__button-icon"></i></a>
+                            <a href="mailto:contact.jahswill@gmail.com" className="contact__button">Send an email <i className="bx bx-right-arrow-alt contact__button-icon"></i></a>
                         </div>
 
                         <div className="contact__card">
                             <i className="bx bxl-whatsapp contact__card-icon"></i>
 
                             <h3 className="contact__card-title">Whatsapp</h3>
-                            <span className="contact__card-data">+234-815577-5585</span>
+                            <span className="contact__card-data">+234-90317-41426</span>
 
-                            <a href="https://api.whatsapp.com/send?phone=2348155775585&text=Hello,%20more%20information!" className="contact__button">Message me <i className="bx bx-right-arrow-alt contact__button-icon"></i></a>
+                            <a href="https://api.whatsapp.com/send?phone=2349031741426&text=Hello,%20I%20want%20to..." className="contact__button">Message me <i className="bx bx-right-arrow-alt contact__button-icon"></i></a>
                         </div>
 
                         <div className="contact__card">
