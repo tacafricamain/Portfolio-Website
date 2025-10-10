@@ -35,12 +35,19 @@ const Testimonials = () => {
     if (isLocalStorageAvailable()) {
       try {
         const localData = localStorage.getItem('testimonials');
+        const deletedIds = JSON.parse(localStorage.getItem('deletedTestimonials') || '[]');
+        
         if (localData) {
           const parsedData = JSON.parse(localData);
-          // Merge saved testimonials with default data, avoiding duplicates
+          // Merge saved testimonials with default data, avoiding duplicates and deleted items
           const existingIds = new Set(Data.map(item => item.id));
-          const newTestimonials = parsedData.filter(item => !existingIds.has(item.id));
-          savedTestimonials = [...newTestimonials, ...Data];
+          const newTestimonials = parsedData.filter(item => 
+            !existingIds.has(item.id) && !deletedIds.includes(item.id)
+          );
+          savedTestimonials = [...newTestimonials, ...Data.filter(item => !deletedIds.includes(item.id))];
+        } else {
+          // Filter out deleted testimonials from default data
+          savedTestimonials = Data.filter(item => !deletedIds.includes(item.id));
         }
       } catch (error) {
         console.warn('Failed to load testimonials from localStorage:', error);
@@ -60,6 +67,18 @@ const Testimonials = () => {
   const [editingId, setEditingId] = useState(null);
   const [adminMode, setAdminMode] = useState(false);
   const [keySequence, setKeySequence] = useState('');
+  const [deletedTestimonials, setDeletedTestimonials] = useState(() => {
+    // Track deleted testimonials to prevent them from reappearing
+    if (isLocalStorageAvailable()) {
+      try {
+        const deletedIds = localStorage.getItem('deletedTestimonials');
+        return deletedIds ? JSON.parse(deletedIds) : [];
+      } catch (error) {
+        console.warn('Failed to load deleted testimonials from localStorage:', error);
+      }
+    }
+    return [];
+  });
   const [userTestimonials, setUserTestimonials] = useState(() => {
     if (isLocalStorageAvailable()) {
       try {
@@ -94,17 +113,30 @@ const Testimonials = () => {
     }
   }, [userTestimonials]);
 
+  // Save deleted testimonials to localStorage
+  useEffect(() => {
+    if (isLocalStorageAvailable()) {
+      try {
+        localStorage.setItem('deletedTestimonials', JSON.stringify(deletedTestimonials));
+      } catch (error) {
+        console.warn('Failed to save deleted testimonials to localStorage:', error);
+      }
+    }
+  }, [deletedTestimonials]);
+
   // Load testimonials from cloud on component mount
   useEffect(() => {
     const loadCloudTestimonials = async () => {
       try {
         const cloudTestimonials = await testimonialsService.getTestimonials();
         if (cloudTestimonials && cloudTestimonials.length > 0) {
-          // Merge cloud testimonials with existing ones, avoiding duplicates
+          // Merge cloud testimonials with existing ones, avoiding duplicates and deleted items
           setTestimonials(prev => {
             const existingIds = new Set(prev.map(item => item.id));
             const newCloudTestimonials = cloudTestimonials.filter(item => 
-              !existingIds.has(item.id) && !Data.some(d => d.id === item.id)
+              !existingIds.has(item.id) && 
+              !Data.some(d => d.id === item.id) && 
+              !deletedTestimonials.includes(item.id)
             );
             return [...newCloudTestimonials, ...prev];
           });
@@ -115,7 +147,7 @@ const Testimonials = () => {
     };
 
     loadCloudTestimonials();
-  }, []);
+  }, [deletedTestimonials]);
 
   // Secret admin access - listen for key sequence
   useEffect(() => {
@@ -181,6 +213,9 @@ const Testimonials = () => {
       // Remove from testimonials list
       const updatedTestimonials = testimonials.filter(t => t.id !== testimonialId);
       setTestimonials(updatedTestimonials);
+      
+      // Add to deleted testimonials list to prevent reappearance
+      setDeletedTestimonials(prev => [...prev, testimonialId]);
       
       // Remove from user's testimonials tracking (only if it was their own)
       if (isOwnTestimonial) {
