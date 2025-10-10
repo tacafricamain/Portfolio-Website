@@ -16,7 +16,7 @@ const Services = () => {
                 <div className="services__content">
                     <div>
                         <i className="uil uil-web-grid services__icon"></i>
-                        <h3 className="services__title">Product <br /> Designer</h3>
+                        <h3 className="services__title">Product <br /> Design</h3>
                     </div>
 
                     <span className="services__button" onClick={() => toggleTab(1)}>View More <i className="uil uil-arrow-right services__button-icon"></i></span>
@@ -25,7 +25,7 @@ const Services = () => {
                         <div className="services__modal-content">
                             <i onClick={() => toggleTab(0)} className="uil uil-times services__modal-close"></i>
 
-                            <h3 className="services__modal-title">Product Designer</h3>
+                            <h3 className="services__modal-title">Product Design</h3>
                             <p className="services__modal-description">With years of experience, I design clean, user-focused product experiences that align with brand and business goals.</p>
 
                             <ul className="services__modal-services grid">
@@ -61,7 +61,7 @@ const Services = () => {
                 <div className="services__content">
                     <div>
                         <i className="uil uil-arrow services__icon"></i>
-                        <h3 className="services__title">UI/UX <br /> Designer</h3>
+                        <h3 className="services__title">UI/UX <br /> Design</h3>
                     </div>
 
                     <span onClick={() => toggleTab(2)} className="services__button" >View More <i className="uil uil-arrow-right services__button-icon"></i></span>
@@ -70,7 +70,7 @@ const Services = () => {
                         <div className="services__modal-content">
                             <i onClick={() => toggleTab(0)} className="uil uil-times services__modal-close"></i>
 
-                            <h3 className="services__modal-title">UI/UX Designer</h3>
+                            <h3 className="services__modal-title">UI/UX Design</h3>
                             <p className="services__modal-description">I craft intuitive digital experiences with a focus on usability, aesthetics, and seamless interaction — delivering designs that users love.</p>
 
                             <ul className="services__modal-services grid">
@@ -106,7 +106,7 @@ const Services = () => {
                 <div className="services__content">
                     <div>
                         <i class="uil uil-window services__icon"></i>
-                        <h3 className="services__title">Full Stack <br /> Developer</h3>
+                        <h3 className="services__title">Full Stack <br /> Developement</h3>
                     </div>
 
                     <span onClick={() => toggleTab(3)} className="services__button">View More <i className="uil uil-arrow-right services__button-icon"></i></span>
@@ -115,7 +115,7 @@ const Services = () => {
                         <div className="services__modal-content">
                             <i onClick={() => toggleTab(0)} className="uil uil-times services__modal-close"></i>
 
-                            <h3 className="services__modal-title">Full Stack Developer</h3>
+                            <h3 className="services__modal-title">Full Stack Development</h3>
                             <p className="services__modal-description">I build complete web applications — from sleek front-end interfaces to secure and scalable back-end systems, ensuring smooth functionality across the stack.</p>
 
                             <ul className="services__modal-services grid">

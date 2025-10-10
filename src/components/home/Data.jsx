@@ -10,7 +10,7 @@ const Data = () => {
 
     return (
         <div className="home__data">
-            <h2 className="home__title">Hi, Good {getGreeting()}
+            <h2 className="home__title">Hi, good {getGreeting()}
                 <svg
                     width="36"
                     height="36"

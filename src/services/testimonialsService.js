@@ -1,9 +1,9 @@
 // Simple cloud testimonials service
 class TestimonialsService {
   constructor() {
-    this.binId = process.env.68e904e6d0ea881f409c73bd;
+    this.binId = process.env.REACT_APP_JSONBIN_BIN_ID;
     this.apiUrl = `https://api.jsonbin.io/v3/b/${this.binId}`;
-    this.apiKey = process.env.$2a$10$IePpyhNS4liS6pfbRgsxme4LRdQ1e6J5bnCPv8SlrXYSMOOPdivYC;
+    this.apiKey = process.env.REACT_APP_JSONBIN_API_KEY;
   }
 
   async getTestimonials() {
@@ -70,6 +70,5 @@ class TestimonialsService {
   }
 }
 
-export { TestimonialsService };
 
 export { TestimonialsService };
