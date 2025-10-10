@@ -128,12 +128,38 @@ const Testimonials = () => {
   useEffect(() => {
     const loadCloudTestimonials = async () => {
       try {
-        const cloudTestimonials = await testimonialsService.getTestimonials();
-        if (cloudTestimonials && cloudTestimonials.length > 0) {
-          // Merge cloud testimonials with existing ones, avoiding duplicates and deleted items
+        const cloudData = await testimonialsService.getTestimonials();
+        
+        if (cloudData && typeof cloudData === 'object' && cloudData.testimonials) {
+          // New format with separate testimonials and deleted IDs
+          const { testimonials: cloudTestimonials, deletedIds: cloudDeletedIds } = cloudData;
+          
+          // Merge cloud deleted IDs with local ones
+          if (cloudDeletedIds && cloudDeletedIds.length > 0) {
+            setDeletedTestimonials(prev => {
+              const combined = [...new Set([...prev, ...cloudDeletedIds])];
+              return combined;
+            });
+          }
+          
+          // Add cloud testimonials, filtering out deleted ones
+          if (cloudTestimonials && cloudTestimonials.length > 0) {
+            setTestimonials(prev => {
+              const existingIds = new Set(prev.map(item => item.id));
+              const allDeletedIds = [...deletedTestimonials, ...(cloudDeletedIds || [])];
+              const newCloudTestimonials = cloudTestimonials.filter(item => 
+                !existingIds.has(item.id) && 
+                !Data.some(d => d.id === item.id) && 
+                !allDeletedIds.includes(item.id)
+              );
+              return [...newCloudTestimonials, ...prev.filter(t => !allDeletedIds.includes(t.id))];
+            });
+          }
+        } else if (Array.isArray(cloudData) && cloudData.length > 0) {
+          // Old format - just testimonials array
           setTestimonials(prev => {
             const existingIds = new Set(prev.map(item => item.id));
-            const newCloudTestimonials = cloudTestimonials.filter(item => 
+            const newCloudTestimonials = cloudData.filter(item => 
               !existingIds.has(item.id) && 
               !Data.some(d => d.id === item.id) && 
               !deletedTestimonials.includes(item.id)
@@ -215,17 +241,18 @@ const Testimonials = () => {
       setTestimonials(updatedTestimonials);
       
       // Add to deleted testimonials list to prevent reappearance
-      setDeletedTestimonials(prev => [...prev, testimonialId]);
+      const updatedDeletedIds = [...deletedTestimonials, testimonialId];
+      setDeletedTestimonials(updatedDeletedIds);
       
       // Remove from user's testimonials tracking (only if it was their own)
       if (isOwnTestimonial) {
         setUserTestimonials(prev => prev.filter(id => id !== testimonialId));
       }
       
-      // Save to cloud (only user-generated testimonials, not default ones)
+      // Save to cloud with both testimonials and deleted IDs for cross-device sync
       try {
         const userOnlyTestimonials = updatedTestimonials.filter(t => !Data.some(d => d.id === t.id));
-        await testimonialsService.saveTestimonials(userOnlyTestimonials);
+        await testimonialsService.saveTestimonials(userOnlyTestimonials, updatedDeletedIds);
       } catch (error) {
         console.warn('Failed to update cloud after deletion:', error);
       }
@@ -297,7 +324,8 @@ const Testimonials = () => {
       
       // Save to cloud
       try {
-        await testimonialsService.saveTestimonials(updatedTestimonials.filter(t => !Data.some(d => d.id === t.id)));
+        const userOnlyTestimonials = updatedTestimonials.filter(t => !Data.some(d => d.id === t.id));
+        await testimonialsService.saveTestimonials(userOnlyTestimonials, deletedTestimonials);
       } catch (error) {
         console.warn('Failed to save to cloud:', error);
       }
@@ -323,7 +351,7 @@ const Testimonials = () => {
       // Save to cloud (only user-generated testimonials, not default ones)
       try {
         const userOnlyTestimonials = updatedTestimonials.filter(t => !Data.some(d => d.id === t.id));
-        await testimonialsService.saveTestimonials(userOnlyTestimonials);
+        await testimonialsService.saveTestimonials(userOnlyTestimonials, deletedTestimonials);
       } catch (error) {
         console.warn('Failed to save to cloud:', error);
       }

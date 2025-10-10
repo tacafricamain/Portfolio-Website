@@ -32,6 +32,12 @@ class TestimonialsService {
         return data.record.testimonials;
       } else if (data.record && Array.isArray(data.record.data)) {
         return data.record.data;
+      } else if (data.record && data.record.testimonials && data.record.deletedIds) {
+        // New format with separate testimonials and deleted IDs
+        return {
+          testimonials: data.record.testimonials || [],
+          deletedIds: data.record.deletedIds || []
+        };
       }
       
       return [];
@@ -41,12 +47,19 @@ class TestimonialsService {
     }
   }
 
-  async saveTestimonials(testimonials) {
+  async saveTestimonials(testimonials, deletedIds = []) {
     try {
       if (!this.apiKey || !this.binId) {
         console.warn('JSONBin API key or Bin ID not configured');
         return false;
       }
+      
+      // Save both testimonials and deleted IDs in cloud
+      const cloudData = {
+        testimonials: testimonials,
+        deletedIds: deletedIds,
+        lastUpdated: new Date().toISOString()
+      };
       
       const response = await fetch(this.apiUrl, {
         method: 'PUT',
@@ -54,14 +67,14 @@ class TestimonialsService {
           'Content-Type': 'application/json',
           'X-Master-Key': this.apiKey
         },
-        body: JSON.stringify(testimonials)
+        body: JSON.stringify(cloudData)
       });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      console.log('Testimonials saved to cloud successfully');
+      console.log('Testimonials and deletions saved to cloud successfully');
       return true;
     } catch (error) {
       console.warn('Failed to save testimonials to cloud:', error);
