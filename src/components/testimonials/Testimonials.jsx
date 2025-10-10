@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./testimonials.css";
 import { Data } from "./Data";
+import { TestimonialsService } from "../../services/testimonialsService";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -13,22 +14,42 @@ import 'swiper/css/pagination';
 import { Pagination, Autoplay } from 'swiper/modules';
 
 const Testimonials = () => {
-  const [testimonials, setTestimonials] = useState(() => {
-    // Load testimonials from localStorage with error handling
+  const testimonialsService = new TestimonialsService();
+  
+  // Check if localStorage is available and working
+  const isLocalStorageAvailable = () => {
     try {
-      const savedTestimonials = localStorage.getItem('testimonials');
-      if (savedTestimonials) {
-        const parsed = JSON.parse(savedTestimonials);
-        // Ensure we have valid data
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (error) {
-      console.warn('Error loading testimonials from localStorage:', error);
+      const testKey = '__localStorage_test__';
+      localStorage.setItem(testKey, 'test');
+      localStorage.removeItem(testKey);
+      return true;
+    } catch (e) {
+      return false;
     }
-    return Data;
+  };
+
+  const [testimonials, setTestimonials] = useState(() => {
+    // Always start with default data and merge with localStorage if available
+    let savedTestimonials = [...Data];
+    
+    if (isLocalStorageAvailable()) {
+      try {
+        const localData = localStorage.getItem('testimonials');
+        if (localData) {
+          const parsedData = JSON.parse(localData);
+          // Merge saved testimonials with default data, avoiding duplicates
+          const existingIds = new Set(Data.map(item => item.id));
+          const newTestimonials = parsedData.filter(item => !existingIds.has(item.id));
+          savedTestimonials = [...newTestimonials, ...Data];
+        }
+      } catch (error) {
+        console.warn('Failed to load testimonials from localStorage:', error);
+      }
+    }
+    
+    return savedTestimonials;
   });
+  
   const [formData, setFormData] = useState({
     name: '',
     comment: '',
@@ -38,36 +59,61 @@ const Testimonials = () => {
   const [message, setMessage] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [userTestimonials, setUserTestimonials] = useState(() => {
-    // Load user's own testimonials from localStorage with error handling
-    try {
-      const savedUserTestimonials = localStorage.getItem('userTestimonials');
-      if (savedUserTestimonials) {
-        const parsed = JSON.parse(savedUserTestimonials);
-        return Array.isArray(parsed) ? parsed : [];
+    if (isLocalStorageAvailable()) {
+      try {
+        const savedUserTestimonials = localStorage.getItem('userTestimonials');
+        return savedUserTestimonials ? JSON.parse(savedUserTestimonials) : [];
+      } catch (error) {
+        console.warn('Failed to load user testimonials from localStorage:', error);
       }
-    } catch (error) {
-      console.warn('Error loading user testimonials from localStorage:', error);
     }
     return [];
   });
 
   // Save testimonials to localStorage whenever testimonials change
   useEffect(() => {
-    try {
-      localStorage.setItem('testimonials', JSON.stringify(testimonials));
-    } catch (error) {
-      console.warn('Error saving testimonials to localStorage:', error);
+    if (isLocalStorageAvailable()) {
+      try {
+        localStorage.setItem('testimonials', JSON.stringify(testimonials));
+      } catch (error) {
+        console.warn('Failed to save testimonials to localStorage:', error);
+      }
     }
   }, [testimonials]);
 
   // Save user testimonials to localStorage
   useEffect(() => {
-    try {
-      localStorage.setItem('userTestimonials', JSON.stringify(userTestimonials));
-    } catch (error) {
-      console.warn('Error saving user testimonials to localStorage:', error);
+    if (isLocalStorageAvailable()) {
+      try {
+        localStorage.setItem('userTestimonials', JSON.stringify(userTestimonials));
+      } catch (error) {
+        console.warn('Failed to save user testimonials to localStorage:', error);
+      }
     }
   }, [userTestimonials]);
+
+  // Load testimonials from cloud on component mount
+  useEffect(() => {
+    const loadCloudTestimonials = async () => {
+      try {
+        const cloudTestimonials = await testimonialsService.getTestimonials();
+        if (cloudTestimonials && cloudTestimonials.length > 0) {
+          // Merge cloud testimonials with existing ones, avoiding duplicates
+          setTestimonials(prev => {
+            const existingIds = new Set(prev.map(item => item.id));
+            const newCloudTestimonials = cloudTestimonials.filter(item => 
+              !existingIds.has(item.id) && !Data.some(d => d.id === item.id)
+            );
+            return [...newCloudTestimonials, ...prev];
+          });
+        }
+      } catch (error) {
+        console.warn('Failed to load testimonials from cloud:', error);
+      }
+    };
+
+    loadCloudTestimonials();
+  }, []);
 
   const handleEdit = (testimonial) => {
     setEditingId(testimonial.id);
@@ -102,7 +148,7 @@ const Testimonials = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.comment.trim()) return;
 
@@ -127,18 +173,26 @@ const Testimonials = () => {
 
     if (editingId) {
       // Edit existing testimonial
-      setTestimonials(prev => 
-        prev.map(testimonial => 
-          testimonial.id === editingId 
-            ? {
-                ...testimonial,
-                title: formData.name,
-                description: formData.comment,
-                rating: formData.rating
-              }
-            : testimonial
-        )
+      const updatedTestimonials = testimonials.map(testimonial => 
+        testimonial.id === editingId 
+          ? {
+              ...testimonial,
+              title: formData.name,
+              description: formData.comment,
+              rating: formData.rating
+            }
+          : testimonial
       );
+      
+      setTestimonials(updatedTestimonials);
+      
+      // Save to cloud
+      try {
+        await testimonialsService.saveTestimonials(updatedTestimonials.filter(t => !Data.some(d => d.id === t.id)));
+      } catch (error) {
+        console.warn('Failed to save to cloud:', error);
+      }
+      
       setMessage('Your testimonial has been updated successfully!');
       setEditingId(null);
     } else {
@@ -151,10 +205,19 @@ const Testimonials = () => {
       };
 
       // Add to testimonials list
-      setTestimonials(prev => [newTestimonial, ...prev]);
+      const updatedTestimonials = [newTestimonial, ...testimonials];
+      setTestimonials(updatedTestimonials);
       
       // Track user's testimonials
       setUserTestimonials(prev => [...prev, newTestimonial.id]);
+      
+      // Save to cloud (only user-generated testimonials, not default ones)
+      try {
+        const userOnlyTestimonials = updatedTestimonials.filter(t => !Data.some(d => d.id === t.id));
+        await testimonialsService.saveTestimonials(userOnlyTestimonials);
+      } catch (error) {
+        console.warn('Failed to save to cloud:', error);
+      }
       
       setMessage('Thank you for your positive review! It has been added to our testimonials.');
     }

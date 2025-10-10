@@ -234,25 +234,3 @@ h1, h2, h3, h4, h5, h6,
     margin-right: var(--mb-1);
   }
 }
-
-/* Mobile layout adjustments for bottom navigation */
-@media screen and (max-width: 767px) {
-  .main {
-    padding-bottom: 5rem; /* Space for bottom navigation */
-  }
-  
-  .container {
-    margin-left: var(--mb-1);
-    margin-right: var(--mb-1);
-  }
-  
-  /* Ensure sections have proper spacing */
-  .section {
-    padding: 4rem 0 2rem;
-  }
-  
-  /* Fix any potential layout issues with bottom nav */
-  body {
-    padding-bottom: 0;
-  }
-}
