@@ -14,10 +14,18 @@ import { Pagination, Autoplay } from 'swiper/modules';
 
 const Testimonials = () => {
   const [testimonials, setTestimonials] = useState(() => {
-    // Load testimonials from localStorage on initialization
-    const savedTestimonials = localStorage.getItem('testimonials');
-    if (savedTestimonials) {
-      return JSON.parse(savedTestimonials);
+    // Load testimonials from localStorage with error handling
+    try {
+      const savedTestimonials = localStorage.getItem('testimonials');
+      if (savedTestimonials) {
+        const parsed = JSON.parse(savedTestimonials);
+        // Ensure we have valid data
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.warn('Error loading testimonials from localStorage:', error);
     }
     return Data;
   });
@@ -30,19 +38,35 @@ const Testimonials = () => {
   const [message, setMessage] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [userTestimonials, setUserTestimonials] = useState(() => {
-    // Load user's own testimonials from localStorage
-    const savedUserTestimonials = localStorage.getItem('userTestimonials');
-    return savedUserTestimonials ? JSON.parse(savedUserTestimonials) : [];
+    // Load user's own testimonials from localStorage with error handling
+    try {
+      const savedUserTestimonials = localStorage.getItem('userTestimonials');
+      if (savedUserTestimonials) {
+        const parsed = JSON.parse(savedUserTestimonials);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+    } catch (error) {
+      console.warn('Error loading user testimonials from localStorage:', error);
+    }
+    return [];
   });
 
   // Save testimonials to localStorage whenever testimonials change
   useEffect(() => {
-    localStorage.setItem('testimonials', JSON.stringify(testimonials));
+    try {
+      localStorage.setItem('testimonials', JSON.stringify(testimonials));
+    } catch (error) {
+      console.warn('Error saving testimonials to localStorage:', error);
+    }
   }, [testimonials]);
 
   // Save user testimonials to localStorage
   useEffect(() => {
-    localStorage.setItem('userTestimonials', JSON.stringify(userTestimonials));
+    try {
+      localStorage.setItem('userTestimonials', JSON.stringify(userTestimonials));
+    } catch (error) {
+      console.warn('Error saving user testimonials to localStorage:', error);
+    }
   }, [userTestimonials]);
 
   const handleEdit = (testimonial) => {

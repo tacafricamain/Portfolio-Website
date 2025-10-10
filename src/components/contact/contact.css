@@ -108,24 +108,23 @@
 }
 
 .contact__message {
-    padding: 1rem;
-    border-radius: 0.75rem;
-    margin-bottom: var(--mb-1-5);
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
     text-align: center;
-    font-size: var(--small-font-size);
     font-weight: var(--font-medium);
 }
 
-.contact__message.success {
+.contact__message--success {
     background-color: #d4edda;
-    border: 1px solid #c3e6cb;
     color: #155724;
+    border: 1px solid #c3e6cb;
 }
 
-.contact__message.error {
+.contact__message--error {
     background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
     color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 .contact__form-input:disabled {
@@ -136,6 +135,16 @@
 .button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* Loading spinner */
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /*=============== BREAKPOINTS ===============*/
