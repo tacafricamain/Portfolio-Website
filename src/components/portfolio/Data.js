@@ -1,8 +1,26 @@
 export const projectsData = [
   // ...existing projects...
   {
-    id: Date.now(), // or use next available ID
-    image: "/assets/brahamas-tour.png", // Add screenshot of your website
+    id: Date.now() + 1, // Ensure unique ID
+    image: "/assets/medic-dashboard.png", // Add screenshot of your dashboard
+    title: "Medical Dashboard System",
+    description: "A comprehensive hospital management dashboard featuring patient tracking, appointment scheduling, staff management, and real-time analytics. Built with modern web technologies for healthcare professionals.",
+    category: "web",
+    technologies: ["React", "JavaScript", "CSS3", "Dashboard UI", "Healthcare Analytics"],
+    demoLink: "https://medic-0.vercel.app/dashboard",
+    codeLink: "https://github.com/yourusername/medical-dashboard", // Update with actual GitHub repo
+    features: [
+      "Patient management system",
+      "Appointment scheduling",
+      "Real-time analytics dashboard",
+      "Staff management interface",
+      "Responsive healthcare UI",
+      "Revenue tracking"
+    ]
+  },
+  {
+    id: Date.now(), 
+    image: "/assets/brahamas-tour.png",
     title: "Brahamas Tour Website",
     description: "A professional travel booking website for Brahamas tours featuring destination showcases, customer reviews, and booking functionality. Built with modern web technologies and responsive design.",
     category: "web",
