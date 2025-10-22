@@ -72,21 +72,21 @@ const ProjectData = [
     title: "Coffee Online Store",
     description: "A modern and elegant UI/UX design for a coffee e-commerce platform. Features product showcases, brewing guides, subscription services, and a seamless checkout experience designed in Figma.",
     image: ProjectImg9,
-    liveLink: "#", // Figma design - no live link
+    liveLink: "#", 
   },
   {
     id: 10,
     title: "Music App",
     description: "An intuitive music streaming app design with clean interface, playlist management, artist profiles, and audio controls. Created with modern design principles and user-centered approach in Figma.",
     image: ProjectImg10,
-    liveLink: "#", // Figma design - no live link
+    liveLink: "#", 
   },
   {
     id: 11,
     title: "Crypto Dashboard",
     description: "A comprehensive cryptocurrency trading dashboard design featuring real-time charts, portfolio tracking, market analysis, and trading interfaces. Designed with modern fintech aesthetics in Figma.",
     image: ProjectImg11,
-    liveLink: "#", // Figma design - no live link
+    liveLink: "#",
   },
 ];
 

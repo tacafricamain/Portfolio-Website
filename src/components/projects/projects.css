@@ -71,6 +71,51 @@
   border-color: var(--title-color);
 }
 
+/* ✅ Disabled button for Figma designs */
+.project__btn--disabled {
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 1rem;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ✅ Scroll to Top Button */
+.scrollup {
+  position: fixed;
+  right: 2.5rem;
+  bottom: -20%;
+  background-color: var(--title-color);
+  opacity: 0.8;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.4rem;
+  z-index: var(--z-tooltip);
+  transition: all 0.4s ease;
+}
+
+.scrollup:hover {
+  background-color: var(--title-color-dark);
+  opacity: 1;
+}
+
+.scrollup__icon {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+/* Show scroll */
+.show-scroll {
+  bottom: 5rem;
+}
+
 /* ✅ Description */
 .project__description {
   font-size: 0.95rem;
@@ -155,6 +200,25 @@
     font-size: 0.9rem;
     padding: 0.4rem 0.85rem;
   }
+
+  .project__btn--disabled {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.85rem;
+  }
+
+  /* Scroll to top responsive */
+  .scrollup {
+    right: 1.5rem;
+    padding: 0.25rem 0.4rem;
+  }
+
+  .scrollup__icon {
+    font-size: 1.25rem;
+  }
+
+  .show-scroll {
+    bottom: 4rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -183,7 +247,22 @@
     padding: 0.35rem 0.65rem;
   }
 
-  .project__img-wrapper {
-    height: 160px;
+  .project__btn--disabled {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  /* Scroll to top mobile */
+  .scrollup {
+    right: 1rem;
+    padding: 0.2rem 0.35rem;
+  }
+
+  .scrollup__icon {
+    font-size: 1rem;
+  }
+
+  .show-scroll {
+    bottom: 3rem;
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import './projects.css';
 import ProjectData from './ProjectData';
-import ProjectCard from './ProjectCard'; // ✅ Add missing import
+import ProjectCard from './ProjectCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/css';

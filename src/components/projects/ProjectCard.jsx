@@ -8,7 +8,7 @@ const ProjectCard = ({ title, description, image, liveLink, githubLink }) => {
                 <div className="project__card-header">
                     <span className="project__title">{title}</span>
                     <div className="project__links">
-                        {liveLink && (
+                        {liveLink && liveLink !== "#" && (
                             <a
                                 href={liveLink}
                                 className="project__btn project__btn--active"
@@ -19,15 +19,26 @@ const ProjectCard = ({ title, description, image, liveLink, githubLink }) => {
                                 <i className="uil uil-external-link-alt"></i>
                             </a>
                         )}
-                        <a
-                            href={githubLink}
-                            className="project__btn"
-                            target="_blank"
-                            rel="noreferrer"
-                            aria-label="GitHub Repo"
-                        >
-                            <i className="uil uil-github"></i>
-                        </a>
+                        {liveLink === "#" && (
+                            <span
+                                className="project__btn project__btn--disabled"
+                                aria-label="Figma Design"
+                                title="Figma Design - No Live Link"
+                            >
+                                <i className="uil uil-figma"></i>
+                            </span>
+                        )}
+                        {githubLink && githubLink !== "#" && (
+                            <a
+                                href={githubLink}
+                                className="project__btn"
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="GitHub Repo"
+                            >
+                                <i className="uil uil-github"></i>
+                            </a>
+                        )}
                     </div>
                 </div>
                 <p className="project__description">{description}</p>
