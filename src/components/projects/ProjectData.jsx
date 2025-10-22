@@ -6,6 +6,9 @@ import ProjectImg5 from "../../assets/project5.png";
 import ProjectImg6 from "../../assets/project6.png";
 import ProjectImg7 from "../../assets/project7.png";
 import ProjectImg8 from "../../assets/project8.png";
+import ProjectImg9 from "../../assets/project9.png";
+import ProjectImg10 from "../../assets/project10.png";
+import ProjectImg11 from "../../assets/project11.png";
 
 const ProjectData = [
   {
@@ -63,6 +66,27 @@ const ProjectData = [
     description: "A comprehensive hospital management dashboard featuring patient tracking, appointment scheduling, staff management, and real-time analytics for healthcare professionals.",
     image: ProjectImg7,
     liveLink: "https://medic-0.vercel.app/dashboard",
+  },
+  {
+    id: 9,
+    title: "Coffee Online Store",
+    description: "A modern and elegant UI/UX design for a coffee e-commerce platform. Features product showcases, brewing guides, subscription services, and a seamless checkout experience designed in Figma.",
+    image: ProjectImg9,
+    liveLink: "#", // Figma design - no live link
+  },
+  {
+    id: 10,
+    title: "Music App",
+    description: "An intuitive music streaming app design with clean interface, playlist management, artist profiles, and audio controls. Created with modern design principles and user-centered approach in Figma.",
+    image: ProjectImg10,
+    liveLink: "#", // Figma design - no live link
+  },
+  {
+    id: 11,
+    title: "Crypto Dashboard",
+    description: "A comprehensive cryptocurrency trading dashboard design featuring real-time charts, portfolio tracking, market analysis, and trading interfaces. Designed with modern fintech aesthetics in Figma.",
+    image: ProjectImg11,
+    liveLink: "#", // Figma design - no live link
   },
 ];
 
